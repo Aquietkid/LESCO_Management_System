@@ -7,7 +7,16 @@ public class Main {
         //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
         // to see how IntelliJ IDEA suggests fixing it.
     int loginStatus = Main.getLoginStatus();
-
+        System.out.println(loginStatus);
+    if(loginStatus == 1) {
+        System.out.println("In emp menu");
+        EmployeeMenu employeeMenu = new EmployeeMenu();
+        employeeMenu.displayMenu();
+    } else if (loginStatus == 2) {
+        System.out.println("In cust menu");
+        CustomerMenu customerMenu = new CustomerMenu();
+        customerMenu.displayMenu();
+    }
 
     }
 
@@ -21,7 +30,9 @@ public class Main {
         String password = scanner.nextLine();
 
         LoginMenu loginMenu = new LoginMenu();
-        return loginMenu.login(username, password);
+        int loginStatus = loginMenu.login(username, password);
+        System.out.println(loginStatus);
+        return loginStatus;
 
     }
 }
