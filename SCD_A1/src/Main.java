@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -5,18 +6,29 @@ import java.util.Scanner;
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-
         List<TariffTax> tariffs = readTariffTaxes();
         System.out.println(tariffs);
 
         int loginStatus = Main.getLoginStatus();
         System.out.println(loginStatus);
+
+        Scanner input = new Scanner(System.in);
+
+
         if (loginStatus == 1) {
             System.out.println("In emp menu");
             EmployeeMenu employeeMenu = new EmployeeMenu();
             employeeMenu.displayMenu();
+            int choice;
+            do {
+                System.out.println("Enter your choice");
+                choice = input.nextInt();
+                if(choice > 9 || choice < 0) {
+                    System.out.println("Invalid choice!");
+                }
+                else break;
+            } while (true);
+            employeeMenu.executeMenuTask(choice, customers);
         } else if (loginStatus == 2) {
             System.out.println("In cust menu");
             CustomerMenu customerMenu = new CustomerMenu();

@@ -3,8 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
 
-import java.util.Date;
-
 /**
  * @author Ali
  */
@@ -17,9 +15,22 @@ public class Customer {
     protected String phone;
     protected Boolean isCommercial; //true for commercial, false for domestic 
     protected Boolean isThreePhase; //true for 3-phase, false for 1-phase
-    protected Date connectionDate;
+    private String connectionDate;
     protected float regularUnitsConsumed;
     protected float peakUnitsConsumed;
+
+    public Customer(String customerID, String CNIC, String customerName, String address, String phone, Boolean isCommercial, Boolean isThreePhase, String connectionDate) {
+        this.customerID = customerID;
+        this.CNIC = CNIC;
+        this.customerName = customerName;
+        this.address = address;
+        this.phone = phone;
+        this.isCommercial = isCommercial;
+        this.isThreePhase = isThreePhase;
+        this.connectionDate = connectionDate;
+        this.regularUnitsConsumed = 0;
+        this.peakUnitsConsumed = 0;
+    }
 
     public String getCustomerID() {
         return customerID;
@@ -69,11 +80,11 @@ public class Customer {
         this.isCommercial = isCommercial;
     }
 
-    public Date getConnectionDate() {
+    public String getConnectionDate() {
         return connectionDate;
     }
 
-    public void setConnectionDate(Date connectionDate) {
+    public void setConnectionDate(String connectionDate) {
         this.connectionDate = connectionDate;
     }
 
