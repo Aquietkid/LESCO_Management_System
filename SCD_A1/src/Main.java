@@ -7,59 +7,52 @@ public class Main {
         final String customersFileName = "./src/CustomersData.txt";
         final String tariffTaxFileName = "./src/TariffTaxInfo.txt";
         final String NADRADBFilename = "./src/NADRADB.txt";
+        final String billingRecordsFileName = "./src/BillingInfo.txt";
 
-        ArrayList<TariffTax> tariffs = TariffTax.readTariffTaxInfo(tariffTaxFileName);
-        ArrayList<Customer> customers = Customer.readCustomersInfo(customersFileName);
+        ArrayList<TariffTax> tariffs = TariffTaxPersistence.readFromFile(tariffTaxFileName);
+        ArrayList<Customer> customers = CustomerPersistence.readFromFile(customersFileName);
         ArrayList<NADRARecord> nadraRecords = NADRADBPersistence.readFromFile(NADRADBFilename);
+        ArrayList<BillingRecord> billingRecords = BillingRecordPersistence.readFromFile(billingRecordsFileName);
+
+        System.out.println(billingRecords);
 
         UserWrapper myUser = new UserWrapper(null);
 
         Scanner input = new Scanner(System.in);
         while (true) {
-            int loginStatus = Main.getLoginStatus(myUser);
+            int loginStatus = myUser.getLoginStatus();
             System.out.println(loginStatus);
 
             if (loginStatus == 1) {
                 EmployeeMenu employeeMenu = new EmployeeMenu(myUser.getMyUser());
-                employeeMenu.runMenu(input, customers, tariffs, nadraRecords);
+                employeeMenu.runMenu(input, customers, tariffs, nadraRecords, billingRecords);
 
             } else if (loginStatus == 2) {
-                CustomerMenu customerMenu = new CustomerMenu();
+                CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
                 customerMenu.displayMenu();
             }
+            else {
+                System.out.println("Invalid login details! Please enter again: ");
+                continue;
+            }
 
-            System.out.println("Do you want to continue? (y/n)");
-            Character choice = input.next().charAt(0);
-            if (choice == 'n' || choice == 'N') {
-                System.out.println("Thank you for using the LESCO system!");
-                break;
+            while (true) {
+                System.out.println("Do you want to continue? (y/n)");
+                char choice = input.next().charAt(0);
+                if (choice == 'n' || choice == 'N') {
+                    input.close();
+                    TariffTaxPersistence.writeToFile(tariffTaxFileName, tariffs);
+                    CustomerPersistence.writeToFile(customersFileName, customers);
+                    NADRADBPersistence.writeToFile(NADRADBFilename, nadraRecords);
+                    BillingRecordPersistence.writeToFile(billingRecordsFileName, billingRecords);
+                    System.out.println("All files updated. \nThank you for using the LESCO system!");
+                    return;
+                } else if (choice != 'y' && choice != 'Y') {
+                    System.out.println("Invalid choice!");
+                }
             }
         }
 
-        input.close();
-
-        TariffTax.writeToFile(tariffTaxFileName, tariffs);
-        Customer.writeToFile(customersFileName, customers);
-        NADRADBPersistence.writeToFile(NADRADBFilename, nadraRecords);
     }
 
-    public static int getLoginStatus(UserWrapper myUser) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter username: ");
-        String username = scanner.nextLine();
-
-        System.out.print("Enter password: ");
-        String password = scanner.nextLine();
-
-        LoginMenu loginMenu = new LoginMenu();
-        int loginStatus = loginMenu.login(username, password);
-//        System.out.println(loginStatus);
-        if(loginStatus == 1) {
-            myUser.setMyUser(new Employee(username, password));
-        }
-        else myUser = null;
-        return loginStatus;
-
-    }
 }

@@ -9,12 +9,10 @@ public class BillingRecord {
     private float fixedCharges;
     private float totalBillingAmount;
     private String dueDate;
-    private String billPaidStatus;
+    private boolean billPaidStatus;
     private String billPaymentDate;
 
-    public BillingRecord(String customerID, String billingMonth, float currentMeterReadingRegular, float currentMeterReadingPeak,
-                         String readingEntryDate, float costOfElectricity, float salesTaxAmount, float fixedCharges,
-                         float totalBillingAmount, String dueDate, String billPaidStatus, String billPaymentDate) {
+    public BillingRecord(String customerID, String billingMonth, float currentMeterReadingRegular, float currentMeterReadingPeak, String readingEntryDate, float costOfElectricity, float salesTaxAmount, float fixedCharges, float totalBillingAmount, String dueDate, boolean billPaidStatus, String billPaymentDate) {
         this.customerID = customerID;
         this.billingMonth = billingMonth;
         this.currentMeterReadingRegular = currentMeterReadingRegular;
@@ -29,26 +27,28 @@ public class BillingRecord {
         this.billPaymentDate = billPaymentDate;
     }
 
+    public BillingRecord(String customerID, String billingMonth, float currentMeterReadingRegular, float currentMeterReadingPeak, String readingEntryDate, float costOfElectricity, float salesTaxAmount, float fixedCharges, float totalBillingAmount, String dueDate) {
+        this.customerID = customerID;
+        this.billingMonth = billingMonth;
+        this.currentMeterReadingRegular = currentMeterReadingRegular;
+        this.currentMeterReadingPeak = currentMeterReadingPeak;
+        this.readingEntryDate = readingEntryDate;
+        this.costOfElectricity = costOfElectricity;
+        this.salesTaxAmount = salesTaxAmount;
+        this.fixedCharges = fixedCharges;
+        this.totalBillingAmount = totalBillingAmount;
+        this.dueDate = dueDate;
+        this.billPaidStatus = false;
+        this.billPaymentDate = "";
+    }
+
     public String toFileString() {
-        return customerID + "," + billingMonth + "," + currentMeterReadingRegular + "," + currentMeterReadingPeak + ","
-                + readingEntryDate + "," + costOfElectricity + "," + salesTaxAmount + "," + fixedCharges + ","
-                + totalBillingAmount + "," + dueDate + "," + billPaidStatus + "," + billPaymentDate + "\n";
+        return customerID + "," + billingMonth + "," + currentMeterReadingRegular + "," + currentMeterReadingPeak + "," + readingEntryDate + "," + costOfElectricity + "," + salesTaxAmount + "," + fixedCharges + "," + totalBillingAmount + "," + dueDate + "," + billPaidStatus + "," + billPaymentDate + "\n";
     }
 
     @Override
     public String toString() {
-        return "Customer ID: " + customerID +
-                ", Billing Month: " + billingMonth +
-                ", Regular Reading: " + currentMeterReadingRegular +
-                ", Peak Reading: " + currentMeterReadingPeak +
-                ", Reading Entry Date: " + readingEntryDate +
-                ", Cost of Electricity: " + costOfElectricity +
-                ", Sales Tax: " + salesTaxAmount +
-                ", Fixed Charges: " + fixedCharges +
-                ", Total Billing: " + totalBillingAmount +
-                ", Due Date: " + dueDate +
-                ", Status: " + billPaidStatus +
-                ", Payment Date: " + billPaymentDate;
+        return "Customer ID: " + customerID + ", Billing Month: " + billingMonth + ", Regular Reading: " + currentMeterReadingRegular + ", Peak Reading: " + currentMeterReadingPeak + ", Reading Entry Date: " + readingEntryDate + ", Cost of Electricity: " + costOfElectricity + ", Sales Tax: " + salesTaxAmount + ", Fixed Charges: " + fixedCharges + ", Total Billing: " + totalBillingAmount + ", Due Date: " + dueDate + ", Status: " + billPaidStatus + ", Payment Date: " + billPaymentDate;
     }
 
     public String getCustomerID() {
@@ -131,11 +131,11 @@ public class BillingRecord {
         this.dueDate = dueDate;
     }
 
-    public String getBillPaidStatus() {
+    public boolean getBillPaidStatus() {
         return billPaidStatus;
     }
 
-    public void setBillPaidStatus(String billPaidStatus) {
+    public void setBillPaidStatus(boolean billPaidStatus) {
         this.billPaidStatus = billPaidStatus;
     }
 

@@ -1,8 +1,12 @@
+import com.sun.source.tree.BinaryTree;
+
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class EmployeeMenu extends Menu {
 
@@ -18,10 +22,11 @@ public class EmployeeMenu extends Menu {
                 5. Record Bill Payment
                 6. Update Tariffs and Taxes
                 7. View Customer Bills
-                8. View Customers with CNICs Expiring Soon
-                9. View All Customers
-                10. Change Password
-                11. Exit
+                8. View Bill Reports
+                9. View Customers with CNICs Expiring Soon
+                10. View All Customers
+                11. Change Password
+                12. Exit
                 """;
         this.myEmployee = employee;
     }
@@ -39,25 +44,25 @@ public class EmployeeMenu extends Menu {
      * loop. The menu can be exited using the choice
      * value corresponding to exit.
      */
-    public void runMenu(Scanner input, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords) {
+    public void runMenu(Scanner input, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
         int choice;
         do {
             this.displayMenu();
             System.out.println("Enter your choice");
             choice = input.nextInt();
-            if (choice > 11 || choice < 0) {
+            if (choice > 12 || choice < 0) {
                 System.out.println("Invalid choice!");
             }
-            if (choice == 11) {
+            else if (choice == 12) {
                 return;
-            } else this.executeMenuTask(choice, customers, tariffs, NADRARecords);
+            } else this.executeMenuTask(choice, customers, tariffs, NADRARecords, billingRecords);
         } while (true);
     }
 
-    public void executeMenuTask(int choice, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords) {
+    public void executeMenuTask(int choice, ArrayList<Customer> customers, ArrayList<TariffTax> tariffs, ArrayList<NADRARecord> NADRARecords, ArrayList<BillingRecord> billingRecords) {
         switch (choice) {
             case 1:
-                createBill();
+                addBillingRecord(billingRecords, customers, tariffs);
                 break;
             case 2:
                 modifyBill();
@@ -69,21 +74,24 @@ public class EmployeeMenu extends Menu {
                 updateCustomerInfo(customers);
                 break;
             case 5:
-                recordBillPayment();
+                recordBillPayment(customers, billingRecords);
                 break;
             case 6:
                 updateTariffTaxInfo(tariffs);
                 break;
             case 7:
-                viewCustomerBills();
+                viewCustomerBills(customers, billingRecords);
                 break;
             case 8:
-                viewCNICCustomers(customers, NADRARecords);
+                viewBillReports(billingRecords);
                 break;
             case 9:
-                viewAllCustomers(customers);
+                viewCNICCustomers(customers, NADRARecords);
                 break;
             case 10:
+                viewAllCustomers(customers);
+                break;
+            case 11:
                 changePassword();
                 break;
             default:
@@ -92,16 +100,35 @@ public class EmployeeMenu extends Menu {
         }
     }
 
+    private void viewBillReports(ArrayList<BillingRecord> billingRecords) {
+        int countPaidBills = 0;
+        int countUnpaidBills = 0;
+        float unpaidAmount = 0.0f;
+        float paidAmount = 0.0f;
+        for(BillingRecord br: billingRecords) {
+            if(br.getBillPaidStatus()) {
+                countPaidBills++;
+                paidAmount += br.getTotalBillingAmount();
+            }
+            else {
+                countUnpaidBills++;
+                unpaidAmount += br.getTotalBillingAmount();
+            }
+        }
+        System.out.println("Bill report: ");
+        System.out.println("Total unpaid bills: " + countUnpaidBills + "\nTotal amount unpaid: " + unpaidAmount);
+        System.out.println("Total paid bills: " + countPaidBills + "\nTotal amount paid: " + paidAmount);
+        System.out.println("-----------------------------------------------------------------------------------");
+    }
+
     private void viewAllCustomers(ArrayList<Customer> customers) {
         for (Customer customer : customers) {
             System.out.println(customer.toString());
         }
     }
 
-    public void createBill() {
-    }
-
     public void modifyBill() {
+        // TODO Create method
     }
 
     public void addNewCustomer(ArrayList<Customer> customers) {
@@ -233,10 +260,121 @@ public class EmployeeMenu extends Menu {
         }
     }
 
-    public void recordBillPayment() {
+    public void recordBillPayment(ArrayList<Customer> customers, ArrayList<BillingRecord> billingRecords) {
+        Scanner scanner = new Scanner(System.in);
+        String customerID;
+        Customer myCustomer = null;
+
+        // Step 1: Get a valid customer ID
+        while (true) {
+            System.out.print("Enter 4-digit Customer ID: ");
+            customerID = scanner.nextLine().trim();
+            if (customerID.matches("\\d{4}")) {
+                for (Customer c : customers) {
+                    if (c.getCustomerID().equals(customerID)) {
+                        myCustomer = c;
+                        break;
+                    }
+                }
+                if (myCustomer != null) break;
+                else
+                    System.out.println("Customer ID does not exist in the records. Please enter a valid customer ID!");
+            } else {
+                System.out.println("Invalid Customer ID. It must be a 4-digit number.");
+            }
+        }
+
+        // Step 2: Find all unpaid bills
+        ArrayList<BillingRecord> unpaidBills = new ArrayList<>();
+        for (BillingRecord br : billingRecords) {
+            if (br.getCustomerID().equals(myCustomer.getCustomerID()) && !br.getBillPaidStatus()) {
+                unpaidBills.add(br);
+            }
+        }
+
+        // Step 3: Handle the case where no unpaid bills exist
+        if (unpaidBills.isEmpty()) {
+            System.out.println("No unpaid bills found for this customer.");
+            return;
+        }
+
+        // Step 4: List all unpaid bills and let the user select which one to pay
+        System.out.println("Unpaid Bills for Customer ID: " + myCustomer.getCustomerID());
+        for (int i = 0; i < unpaidBills.size(); i++) {
+            BillingRecord br = unpaidBills.get(i);
+            System.out.println((i + 1) + ". Billing Month: " + br.getBillingMonth() + ", Amount Due: " + br.getTotalBillingAmount());
+        }
+
+        int selectedBillIndex = -1;
+        while (true) {
+            try {
+                System.out.print("Enter the number of the bill you want to pay (1-" + unpaidBills.size() + "): ");
+                selectedBillIndex = Integer.parseInt(scanner.nextLine().trim()) - 1;
+                if (selectedBillIndex >= 0 && selectedBillIndex < unpaidBills.size()) {
+                    break;
+                } else {
+                    System.out.println("Invalid selection. Please select a number between 1 and " + unpaidBills.size());
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number.");
+            }
+        }
+
+        // Step 5: Mark the selected bill as paid and update customer’s unit consumption
+        BillingRecord selectedBill = unpaidBills.get(selectedBillIndex);
+        selectedBill.setBillPaidStatus(true);  // Mark the bill as paid
+
+        System.out.println("Recording payment for the billing month: " + selectedBill.getBillingMonth());
+
+        // Update regular units consumed
+        float currentMeterReadingRegular = selectedBill.getCurrentMeterReadingRegular();
+        myCustomer.setRegularUnitsConsumed(currentMeterReadingRegular);
+
+        // Update peak units consumed if applicable
+        if (selectedBill.getCurrentMeterReadingPeak() > 0.0f) {
+            float currentMeterReadingPeak = selectedBill.getCurrentMeterReadingPeak();
+            myCustomer.setPeakUnitsConsumed(currentMeterReadingPeak);
+        } else {
+            System.out.println("No peak hour charges apply for this customer.");
+        }
+
+        // Step 6: Set the bill payment date
+        LocalDate today = LocalDate.now();
+        String paymentDate = today.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+        selectedBill.setBillPaymentDate(paymentDate);
+
+        System.out.println("Payment recorded successfully for the billing month: " + selectedBill.getBillingMonth());
+        System.out.println("Payment Date: " + paymentDate);
     }
 
-    public void viewCustomerBills() {
+
+    public void viewCustomerBills(ArrayList<Customer> customers, ArrayList<BillingRecord> billingRecords) {
+        Scanner scanner = new Scanner(System.in);
+        String customerID;
+        while (true) {
+            System.out.print("Enter 4-digit Customer ID: ");
+            customerID = scanner.nextLine().trim();
+            boolean customerExists = false;
+            if (customerID.matches("\\d{4}")) {
+                for (Customer c : customers) {
+                    if (c.getCustomerID().equals(customerID)) {
+                        customerExists = true;
+                    }
+                }
+                if (customerExists) break;
+                else
+                    System.out.println("Customer ID does not exist in the records. Please enter a valid customer ID!");
+            } else System.out.println("Invalid Customer ID. It must be a 4-digit number.");
+        }
+
+        System.out.println("Bills of Customer " + customerID + ":");
+        for(BillingRecord br : billingRecords) {
+            if(br.getCustomerID().equals(customerID)) {
+                System.out.println(br);
+            }
+        }
+        System.out.println("-------------------------------------");
+
     }
 
     public void viewCNICCustomers(ArrayList<Customer> customers, ArrayList<NADRARecord> nadraRecords) {
@@ -311,49 +449,19 @@ public class EmployeeMenu extends Menu {
             if (newPasswordRepeat.equals(newPassword)) break;
             else System.out.print("Passwords do not match! Enter again: ");
         }
-        // TODO Update file
-        writeToFile(checkUsername, newPassword);
+        EmployeePersistence.writeToFile(checkUsername, newPassword);
 
         //Display confirmation message
         System.out.println("Password updated successfully!");
     }
 
-    public static void writeToFile(String _username, String _password) {
-        ArrayList<Employee> employees = new ArrayList<>();
-        final String fileName = "./src/EmployeesData.txt";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                String username = data[0];
-                String password;
-                if (username.equals(_username)) {
-                    password = _password;
-                } else password = data[1];
-
-                Employee employee = new Employee(username, password);
-                employees.add(employee);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
-            for (Employee e : employees) {
-                bw.write(e.toFileString());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     void updateTariffTaxInfo(List<TariffTax> tariffs) {
         Scanner input = new Scanner(System.in);
 
         for (TariffTax tariffTax : tariffs) {
-            System.out.println("Updating details for meter type: " + tariffTax.getMeterType() +
-                    ", customer type: " + tariffTax.getCustomerType());
+            System.out.println("Updating details for meter type: " + tariffTax.getMeterType() + ", customer type: " + tariffTax.getCustomerType());
 
             String choice;
             boolean flag;
@@ -474,4 +582,164 @@ public class EmployeeMenu extends Menu {
             }
         }
     }
+
+    public static void addBillingRecord(ArrayList<BillingRecord> billingRecords, ArrayList<Customer> customers, ArrayList<TariffTax> tariffTaxes) {
+        Scanner scanner = new Scanner(System.in);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d-M-yyyy");
+        String customerID, billingMonth, readingEntryDate, dueDate, billPaidStatus, billPaymentDate;
+        float currentMeterReadingRegular, currentMeterReadingPeak = 0.0f, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount;
+        LocalDate readingDate, paymentDate, today = LocalDate.now();
+
+        Customer myCustomer = null;
+        TariffTax myTariffTax;
+
+
+        while (true) {
+            System.out.print("Enter 4-digit Customer ID: ");
+            customerID = scanner.nextLine().trim();
+            if (customerID.matches("\\d{4}")) {
+                for (Customer c : customers) {
+                    if (c.getCustomerID().equals(customerID)) {
+                        myCustomer = c;
+                        break;
+                    }
+                }
+                if (myCustomer != null) break;
+                else
+                    System.out.println("Customer ID does not exist in the records. Please enter a valid customer ID!");
+            } else System.out.println("Invalid Customer ID. It must be a 4-digit number.");
+        }
+
+        if (!myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //1-phase domestic
+            myTariffTax = tariffTaxes.get(0);
+        } else if (!myCustomer.getThreePhase() && myCustomer.getIsCommercial()) { //1-phase commercial
+            myTariffTax = tariffTaxes.get(1);
+        } else if (myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //3-phase domestic
+            myTariffTax = tariffTaxes.get(2);
+        } else { //3-phase commercial
+            myTariffTax = tariffTaxes.get(3);
+        }
+
+        while (true) {
+            System.out.print("Enter Billing Month (MM-YYYY): ");
+            billingMonth = scanner.nextLine().trim();
+            if (billingMonth.matches("\\d{2}-\\d{4}")) {
+                boolean billExists = false;
+                LocalDate latestBillDate = null;
+
+                for (BillingRecord b : billingRecords) {
+                    if (b.getCustomerID().equals(myCustomer.getCustomerID())) {
+                        LocalDate billDate = LocalDate.parse("01-" + b.getBillingMonth(), DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+
+                        if (b.getBillingMonth().equals(billingMonth)) {
+                            billExists = true;
+                            break;
+                        }
+
+                        // Check for the latest bill date in the records
+                        if (latestBillDate == null || billDate.isAfter(latestBillDate)) {
+                            latestBillDate = billDate;
+                        }
+                    }
+                }
+                int enteredMonth = Integer.parseInt(billingMonth.substring(0, 2));
+                int enteredYear = Integer.parseInt(billingMonth.substring(3, 7));
+                int currentMonth = today.getMonthValue();
+                int currentYear = today.getYear();
+
+                LocalDate enteredBillDate = LocalDate.of(enteredYear, enteredMonth, 1);
+
+                if (billExists) {
+                    System.out.println("A bill for the entered month already exists.");
+                    if(enteredMonth == today.getMonthValue() && enteredYear == today.getYear()) {
+                        System.out.println("No new bill can be added! Returning...");
+                        return;
+                    }
+
+                } else if (enteredYear > currentYear || (enteredYear == currentYear && enteredMonth > currentMonth)) {
+                    System.out.println("Billing Month cannot be in the future.");
+                } else if (enteredMonth < 1 || enteredMonth > 12) {
+                    System.out.println("Invalid month. Please enter a valid month between 01 and 12.");
+                } else if (latestBillDate != null && enteredBillDate.isBefore(latestBillDate)) {
+                    System.out.println("A newer bill already exists. Please enter a valid billing month.");
+                } else {
+                    break;
+                }
+            } else {
+                System.out.println("Invalid format. Billing Month must be in MM-YYYY format.");
+            }
+        }
+
+        while (true) {
+            try {
+                System.out.print("Enter Current Meter Reading Regular: ");
+                currentMeterReadingRegular = Float.parseFloat(scanner.nextLine().trim());
+                if (currentMeterReadingRegular >= 0) {
+                    if (currentMeterReadingRegular < myCustomer.getRegularUnitsConsumed()) {
+                        System.out.println("New reading can not be less than the previous reading! ");
+                    } else break;
+                }
+                System.out.println("Meter reading cannot be negative.");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a valid number.");
+            }
+        }
+
+        if (myTariffTax.getPeakHourUnitPrice() != null) {
+            while (true) {
+                try {
+                    System.out.print("Enter Current Meter Reading Peak: ");
+                    currentMeterReadingPeak = Float.parseFloat(scanner.nextLine().trim());
+                    if (currentMeterReadingPeak >= 0) {
+                        if (currentMeterReadingPeak < myCustomer.getPeakUnitsConsumed()) {
+                            System.out.println("New reading can not be less than the previous reading! ");
+                        } else break;
+                    }
+                    System.out.println("Meter reading cannot be negative.");
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a valid number.");
+                }
+            }
+        } else {
+            System.out.println("No price is charged for peak hour units for this type of meter. ");
+        }
+
+        while (true) {
+            try {
+                System.out.print("Enter Reading Date (DD-MM-YYYY): ");
+                readingEntryDate = scanner.nextLine().trim();
+                readingDate = LocalDate.parse(readingEntryDate, dateFormatter);
+                if (!readingDate.isAfter(today)) {
+                    if (readingDate.isBefore(LocalDate.parse(myCustomer.getConnectionDate(), dateFormatter))) {
+                        System.out.println("Reading Entry Date cannot be before the connection date (" + myCustomer.getConnectionDate() + ").");
+                        continue;
+                    }
+                    break;
+                } else {
+                    System.out.println("Reading Entry Date cannot be in the future.");
+                }
+
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please enter a valid date.");
+            }
+        }
+
+        costOfElectricity = (float) (((currentMeterReadingRegular - myCustomer.getRegularUnitsConsumed()) * myTariffTax.getRegularUnitPrice())
+                + ((myTariffTax.getPeakHourUnitPrice() != null) ? ((currentMeterReadingPeak - myCustomer.getPeakUnitsConsumed()) * myTariffTax.getPeakHourUnitPrice()) : 0.0));
+
+        salesTaxAmount = (float) (costOfElectricity * (myTariffTax.getTaxPercentage() / 100));
+
+        fixedCharges = (float) myTariffTax.getFixedCharges();
+
+        totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
+        System.out.println("Total Billing Amount: " + totalBillingAmount);
+
+        dueDate = dateFormatter.format(readingDate.plusDays(7));
+
+        BillingRecord newRecord = new BillingRecord(customerID, billingMonth, currentMeterReadingRegular, currentMeterReadingPeak, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
+        billingRecords.add(newRecord);
+
+        System.out.println("Billing record added successfully.");
+    }
+
 }

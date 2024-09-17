@@ -4,13 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.time.format.DateTimeFormatter;
 
 public class BillingRecordPersistence {
 
     // Method to write a list of billing records to file
-    public static void writeBillingRecordsToFile(String fileName, List<BillingRecord> billingRecords) {
+    public static void writeToFile(String fileName, ArrayList<BillingRecord> billingRecords) {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
             for (BillingRecord record : billingRecords) {
                 bw.write(record.toFileString());
@@ -21,8 +20,8 @@ public class BillingRecordPersistence {
     }
 
     // Method to read billing records from file
-    public static List<BillingRecord> readBillingRecordsFromFile(String fileName) {
-        List<BillingRecord> billingRecords = new ArrayList<>();
+    public static ArrayList<BillingRecord> readFromFile(String fileName) {
+        ArrayList<BillingRecord> billingRecords = new ArrayList<>();
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -40,8 +39,14 @@ public class BillingRecordPersistence {
                 float fixedCharges = Float.parseFloat(data[7]);
                 float totalBillingAmount = Float.parseFloat(data[8]);
                 String dueDate = data[9];
-                String billPaidStatus = data[10];
-                String billPaymentDate = data[11];
+                boolean billPaidStatus = (data[10].equalsIgnoreCase("true"));
+                String billPaymentDate;
+                try {
+                    billPaymentDate = data[11];
+                }
+                catch (Exception e) {
+                    billPaymentDate = "";
+                }
 
                 BillingRecord record = new BillingRecord(customerID, billingMonth, currentMeterReadingRegular, currentMeterReadingPeak,
                         readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate, billPaidStatus, billPaymentDate);
