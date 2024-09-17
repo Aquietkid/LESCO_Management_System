@@ -35,7 +35,7 @@ public class LoginMenu {
     }
 
     private Boolean compareUserCredentials(String _username, String _password) throws FileNotFoundException {
-        String filePath = "./src/UserData.txt";
+        String filePath = "./src/CustomersData.txt";
 
         Boolean b = readFile(_username, _password, filePath);
 //        System.out.println(b);
