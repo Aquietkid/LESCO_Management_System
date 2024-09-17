@@ -29,7 +29,7 @@ public class Main {
 
             } else if (loginStatus == 2) {
                 CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
-                customerMenu.displayMenu();
+                customerMenu.runMenu(input, tariffs, nadraRecords, billingRecords);
             }
             else {
                 System.out.println("Invalid login details! Please enter again: ");

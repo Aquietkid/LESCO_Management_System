@@ -1,7 +1,4 @@
-import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.List;
 
 class TariffTax {
     private final String meterType;
@@ -58,6 +55,20 @@ class TariffTax {
 
     public void setFixedCharges(double fixedCharges) {
         this.fixedCharges = fixedCharges;
+    }
+
+    static TariffTax getTariffTax(ArrayList<TariffTax> tariffTaxes, Customer myCustomer) {
+        TariffTax myTariffTax;
+        if (!myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //1-phase domestic
+            myTariffTax = tariffTaxes.get(0);
+        } else if (!myCustomer.getThreePhase() && myCustomer.getIsCommercial()) { //1-phase commercial
+            myTariffTax = tariffTaxes.get(1);
+        } else if (myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //3-phase domestic
+            myTariffTax = tariffTaxes.get(2);
+        } else { //3-phase commercial
+            myTariffTax = tariffTaxes.get(3);
+        }
+        return myTariffTax;
     }
 
     @Override

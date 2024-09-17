@@ -610,15 +610,7 @@ public class EmployeeMenu extends Menu {
             } else System.out.println("Invalid Customer ID. It must be a 4-digit number.");
         }
 
-        if (!myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //1-phase domestic
-            myTariffTax = tariffTaxes.get(0);
-        } else if (!myCustomer.getThreePhase() && myCustomer.getIsCommercial()) { //1-phase commercial
-            myTariffTax = tariffTaxes.get(1);
-        } else if (myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //3-phase domestic
-            myTariffTax = tariffTaxes.get(2);
-        } else { //3-phase commercial
-            myTariffTax = tariffTaxes.get(3);
-        }
+        myTariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);
 
         while (true) {
             System.out.print("Enter Billing Month (MM-YYYY): ");
