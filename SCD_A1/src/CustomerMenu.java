@@ -6,8 +6,6 @@ import java.time.format.DateTimeParseException;
 
 public class CustomerMenu extends Menu {
 
-    private DateTimeFormatter dateFormatter;
-
     public CustomerMenu(User customer) {
         this.message = """
                 Customer Menu
@@ -120,10 +118,11 @@ public class CustomerMenu extends Menu {
         String CNIC = null;
         String currentExpiry = null;
         NADRARecord myNADRARecord = null;
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d-M-yyyy");
 
         while (true) {
             System.out.println("Enter your CNIC: ");
-            CNIC = input.nextLine();
+            CNIC = input.nextLine().trim();
             if (CNIC.length() != 13) {
                 System.out.println("CNIC must be 13-digits long!");
             } else if (CNIC.contains("-")) {
@@ -141,30 +140,34 @@ public class CustomerMenu extends Menu {
             }
         }
 
-        while (true) {
-            System.out.println("Enter the new CNIC expiry date (DD/MM/YYYY): ");
-            String expiryDate = input.nextLine().trim();
+        if(myNADRARecord != null && currentExpiry != null) {
 
-            try {
-                // Parse the entered date
-                LocalDate newExpiryDate = LocalDate.parse(expiryDate, dateFormatter);
-                LocalDate currentExpiryDate = LocalDate.parse(currentExpiry, dateFormatter);
+            while (true) {
+                System.out.println("Enter the new CNIC expiry date (D-M-YYYY): ");
+                String expiryDate = input.nextLine().trim();
 
-                // Check if the new expiry date is after the current expiry date
-                if (newExpiryDate.isBefore(currentExpiryDate) || newExpiryDate.equals(currentExpiryDate)) {
-                    System.out.println("New expiry date must be after the current expiry date (" + currentExpiryDate + ").");
-                } else if (newExpiryDate.isBefore(LocalDate.now())) {
-                    System.out.println("Expiry date cannot be in the past.");
-                } else {
-                    // Update the expiry date and exit the loop
-                    myNADRARecord.setExpiryDate(expiryDate); // Assuming this setter exists
-                    System.out.println("CNIC expiry date updated successfully.");
-                    break;
+                try {
+                    // Parse the entered date
+                    LocalDate newExpiryDate = LocalDate.parse(expiryDate, dateFormatter);
+                    LocalDate currentExpiryDate = LocalDate.parse(currentExpiry, dateFormatter);
+
+                    // Check if the new expiry date is after the current expiry date
+                    if (newExpiryDate.isBefore(currentExpiryDate) || newExpiryDate.equals(currentExpiryDate)) {
+                        System.out.println("New expiry date must be after the current expiry date (" + currentExpiryDate + ").");
+                    } else if (newExpiryDate.isBefore(LocalDate.now())) {
+                        System.out.println("Expiry date cannot be in the past.");
+                    } else {
+                        // Update the expiry date and exit the loop
+                        myNADRARecord.setExpiryDate(expiryDate); // Assuming this setter exists
+                        System.out.println("CNIC expiry date updated successfully.");
+                        break;
+                    }
+
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date format. Please use DD-MM-YYYY.");
                 }
-
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use DD-MM-YYYY.");
             }
         }
+        else System.out.println("CNIC not found! ");
     }
 }

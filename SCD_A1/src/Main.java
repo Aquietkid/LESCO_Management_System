@@ -31,7 +31,7 @@ public class Main {
                 Customer myCustomer = (Customer) myUser.getMyUser();
                 for(Customer customer : customers) {
                     if(customer.getCustomerID().equals(myCustomer.getCustomerID())) {
-                        System.out.println("My Customer updated");
+//                        System.out.println("My Customer updated");
                         myCustomer = customer;
                         break;
                     }

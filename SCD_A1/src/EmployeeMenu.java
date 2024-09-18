@@ -320,8 +320,16 @@ public class EmployeeMenu extends Menu {
             }
         }
 
+
+        LocalDate today = LocalDate.now();
+
         // Step 5: Mark the selected bill as paid and update customer’s unit consumption
         BillingRecord selectedBill = unpaidBills.get(selectedBillIndex);
+        LocalDate dueDate = LocalDate.parse(selectedBill.getDueDate(), DateTimeFormatter.ofPattern("d-M-yyyy"));
+        if(dueDate.isBefore(today)) {
+            System.out.println("Bill due date passed. ");
+            return;
+        }
         selectedBill.setBillPaidStatus(true);  // Mark the bill as paid
 
         System.out.println("Recording payment for the billing month: " + selectedBill.getBillingMonth());
@@ -339,7 +347,6 @@ public class EmployeeMenu extends Menu {
         }
 
         // Step 6: Set the bill payment date
-        LocalDate today = LocalDate.now();
         String paymentDate = today.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
         selectedBill.setBillPaymentDate(paymentDate);
 
@@ -726,7 +733,7 @@ public class EmployeeMenu extends Menu {
         totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
         System.out.println("Total Billing Amount: " + totalBillingAmount);
 
-        dueDate = dateFormatter.format(readingDate.plusDays(7));
+        dueDate = dateFormatter.format(today.plusDays(7));
 
         BillingRecord newRecord = new BillingRecord(customerID, billingMonth, currentMeterReadingRegular, currentMeterReadingPeak, readingEntryDate, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount, dueDate);
         billingRecords.add(newRecord);
