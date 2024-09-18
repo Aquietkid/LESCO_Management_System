@@ -28,7 +28,15 @@ public class Main {
                 employeeMenu.runMenu(input, customers, tariffs, nadraRecords, billingRecords);
 
             } else if (loginStatus == 2) {
-                CustomerMenu customerMenu = new CustomerMenu(myUser.getMyUser());
+                Customer myCustomer = (Customer) myUser.getMyUser();
+                for(Customer customer : customers) {
+                    if(customer.getCustomerID().equals(myCustomer.getCustomerID())) {
+                        System.out.println("My Customer updated");
+                        myCustomer = customer;
+                        break;
+                    }
+                }
+                CustomerMenu customerMenu = new CustomerMenu(myCustomer);
                 customerMenu.runMenu(input, tariffs, nadraRecords, billingRecords);
             }
             else {

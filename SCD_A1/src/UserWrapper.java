@@ -29,6 +29,9 @@ public class UserWrapper {
         if(loginStatus == 1) {
             this.setMyUser(new Employee(username, password));
         }
+        else if(loginStatus == 2) {
+            this.setMyUser(new Customer(username, password));
+        }
         else this.setMyUser(null);
         return loginStatus;
 

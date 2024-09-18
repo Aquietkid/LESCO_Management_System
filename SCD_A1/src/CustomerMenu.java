@@ -19,7 +19,7 @@ public class CustomerMenu extends Menu {
         this.myCustomer = (Customer) customer;
     }
 
-    private User myCustomer;
+    private Customer myCustomer;
 
     @Override
     public void displayMenu() {

@@ -42,6 +42,11 @@ public class Customer implements User {
         this.peakUnitsConsumed = peakUnitsConsumed;
     }
 
+    public Customer(String username, String password) {
+        this.customerID = username;
+        this.CNIC = password;
+    }
+
     public String getCustomerID() {
         return customerID;
     }
