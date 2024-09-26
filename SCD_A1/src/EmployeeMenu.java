@@ -1,6 +1,3 @@
-import com.sun.source.tree.BinaryTree;
-
-import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +7,7 @@ import java.time.format.DateTimeParseException;
 
 public class EmployeeMenu extends Menu {
 
-    private User myEmployee;
+    private final User myEmployee;
 
     public EmployeeMenu(User employee) {
         this.message = """
@@ -52,8 +49,7 @@ public class EmployeeMenu extends Menu {
             choice = input.nextInt();
             if (choice > 12 || choice < 0) {
                 System.out.println("Invalid choice!");
-            }
-            else if (choice == 12) {
+            } else if (choice == 12) {
                 return;
             } else this.executeMenuTask(choice, customers, tariffs, NADRARecords, billingRecords);
         } while (true);
@@ -105,12 +101,11 @@ public class EmployeeMenu extends Menu {
         int countUnpaidBills = 0;
         float unpaidAmount = 0.0f;
         float paidAmount = 0.0f;
-        for(BillingRecord br: billingRecords) {
-            if(br.getBillPaidStatus()) {
+        for (BillingRecord br : billingRecords) {
+            if (br.getBillPaidStatus()) {
                 countPaidBills++;
                 paidAmount += br.getTotalBillingAmount();
-            }
-            else {
+            } else {
                 countUnpaidBills++;
                 unpaidAmount += br.getTotalBillingAmount();
             }
@@ -135,8 +130,8 @@ public class EmployeeMenu extends Menu {
         Scanner input = new Scanner(System.in);
         String customerID = "1000"; //Initial minimum value
         for (Customer c : customers) {
-            if (Integer.parseInt(c.getCustomerID()) > Integer.parseInt(customerID)) customerID = c.getCustomerID();
-            customerID = c.getCustomerID();
+            if (Integer.parseInt(c.getCustomerID()) > Integer.parseInt(customerID))
+                customerID = c.getCustomerID();
         }
         customerID = String.valueOf(Integer.parseInt(customerID) + 1);
 
@@ -189,14 +184,11 @@ public class EmployeeMenu extends Menu {
     }
 
     private boolean getBooleanInput(Scanner input) {
-        boolean boolInput;
         while (true) {
             String commercial = input.nextLine();
             if (commercial.equals("Y") || commercial.equals("y")) {
-                boolInput = true;
                 return true;
             } else if (commercial.equals("N") || commercial.equals("n")) {
-                boolInput = false;
                 return false;
             } else {
                 System.out.println("Incorrect choice!");
@@ -305,7 +297,7 @@ public class EmployeeMenu extends Menu {
             System.out.println((i + 1) + ". Billing Month: " + br.getBillingMonth() + ", Amount Due: " + br.getTotalBillingAmount());
         }
 
-        int selectedBillIndex = -1;
+        int selectedBillIndex;
         while (true) {
             try {
                 System.out.print("Enter the number of the bill you want to pay (1-" + unpaidBills.size() + "): ");
@@ -326,7 +318,7 @@ public class EmployeeMenu extends Menu {
         // Step 5: Mark the selected bill as paid and update customer’s unit consumption
         BillingRecord selectedBill = unpaidBills.get(selectedBillIndex);
         LocalDate dueDate = LocalDate.parse(selectedBill.getDueDate(), DateTimeFormatter.ofPattern("d-M-yyyy"));
-        if(dueDate.isBefore(today)) {
+        if (dueDate.isBefore(today)) {
             System.out.println("Bill due date passed. ");
             return;
         }
@@ -366,6 +358,7 @@ public class EmployeeMenu extends Menu {
                 for (Customer c : customers) {
                     if (c.getCustomerID().equals(customerID)) {
                         customerExists = true;
+                        break;
                     }
                 }
                 if (customerExists) break;
@@ -375,8 +368,8 @@ public class EmployeeMenu extends Menu {
         }
 
         System.out.println("Bills of Customer " + customerID + ":");
-        for(BillingRecord br : billingRecords) {
-            if(br.getCustomerID().equals(customerID)) {
+        for (BillingRecord br : billingRecords) {
+            if (br.getCustomerID().equals(customerID)) {
                 System.out.println(br);
             }
         }
@@ -461,7 +454,6 @@ public class EmployeeMenu extends Menu {
         //Display confirmation message
         System.out.println("Password updated successfully!");
     }
-
 
 
     void updateTariffTaxInfo(List<TariffTax> tariffs) {
@@ -593,9 +585,9 @@ public class EmployeeMenu extends Menu {
     public static void addBillingRecord(ArrayList<BillingRecord> billingRecords, ArrayList<Customer> customers, ArrayList<TariffTax> tariffTaxes) {
         Scanner scanner = new Scanner(System.in);
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("d-M-yyyy");
-        String customerID, billingMonth, readingEntryDate, dueDate, billPaidStatus, billPaymentDate;
+        String customerID, billingMonth, readingEntryDate, dueDate;
         float currentMeterReadingRegular, currentMeterReadingPeak = 0.0f, costOfElectricity, salesTaxAmount, fixedCharges, totalBillingAmount;
-        LocalDate readingDate, paymentDate, today = LocalDate.now();
+        LocalDate readingDate, today = LocalDate.now();
 
         Customer myCustomer = null;
         TariffTax myTariffTax;
@@ -650,7 +642,7 @@ public class EmployeeMenu extends Menu {
 
                 if (billExists) {
                     System.out.println("A bill for the entered month already exists.");
-                    if(enteredMonth == today.getMonthValue() && enteredYear == today.getYear()) {
+                    if (enteredMonth == today.getMonthValue() && enteredYear == today.getYear()) {
                         System.out.println("No new bill can be added! Returning...");
                         return;
                     }

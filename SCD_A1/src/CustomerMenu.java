@@ -2,7 +2,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
 
 public class CustomerMenu extends Menu {
 
@@ -17,7 +16,7 @@ public class CustomerMenu extends Menu {
         this.myCustomer = (Customer) customer;
     }
 
-    private Customer myCustomer;
+    private final Customer myCustomer;
 
     @Override
     public void displayMenu() {
@@ -67,7 +66,7 @@ public class CustomerMenu extends Menu {
     public void estimateUpcomingBills(ArrayList<TariffTax> tariffTaxes) {
         // TODO
         Scanner input = new Scanner(System.in);
-        float currentRegularUnits = 0.0f;
+        float currentRegularUnits;
         float currentPeakUnits = 0.0f;
         while (true) {
             try {
@@ -103,11 +102,11 @@ public class CustomerMenu extends Menu {
         }
 
         float costOfElectricity = (float) (currentRegularUnits * myTariffTax.getRegularUnitPrice()) + (float) ((myTariffTax.getPeakHourUnitPrice() != null) ? (currentPeakUnits * myTariffTax.getPeakHourUnitPrice()) : 0.0);
-
+        System.out.println("Cost of electricity = " + costOfElectricity);
         float salesTaxAmount = (float) (costOfElectricity * (myTariffTax.getTaxPercentage() / 100));
-
+        System.out.println("Sales tax amount  = " + salesTaxAmount);
         float fixedCharges = (float) myTariffTax.getFixedCharges();
-
+        System.out.println("Fixed charges = " + fixedCharges);
         float totalBillingAmount = costOfElectricity + salesTaxAmount + fixedCharges;
         System.out.println("Total Billing Amount: " + totalBillingAmount);
     }
