@@ -1,6 +1,8 @@
+package Models;
+
 public class NADRARecord {
-    private String CNIC;
-    private String issuanceDate;  // Format: DD/MM/YYYY
+    private final String CNIC;
+    private final String issuanceDate;  // Format: DD/MM/YYYY
     private String expiryDate;    // Format: DD/MM/YYYY
 
     public NADRARecord(String CNIC, String issuanceDate, String expiryDate) {
@@ -11,18 +13,6 @@ public class NADRARecord {
 
     public String getCNIC() {
         return CNIC;
-    }
-
-    public void setCNIC(String CNIC) {
-        this.CNIC = CNIC;
-    }
-
-    public String getIssuanceDate() {
-        return issuanceDate;
-    }
-
-    public void setIssuanceDate(String issuanceDate) {
-        this.issuanceDate = issuanceDate;
     }
 
     public String getExpiryDate() {

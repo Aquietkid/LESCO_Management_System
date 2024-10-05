@@ -1,11 +1,14 @@
+package Models;
+
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class NADRADBPersistence {
 
-    public static void writeToFile(String fileName, ArrayList<NADRARecord> nadraRecords) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+    private static final String FILENAME = "SCD_A1/src/Models/NADRADB.txt";
+
+    public static void writeToFile(ArrayList<NADRARecord> nadraRecords) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
             for (NADRARecord record : nadraRecords) {
                 bw.write(record.toString());
                 bw.newLine();
@@ -15,10 +18,10 @@ public class NADRADBPersistence {
         }
     }
 
-    public static ArrayList<NADRARecord> readFromFile(String fileName) {
+    public static ArrayList<NADRARecord> readFromFile() {
         ArrayList<NADRARecord> nadraRecords = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");

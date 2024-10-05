@@ -1,12 +1,15 @@
+package Models;
+
 import java.io.*;
 import java.util.ArrayList;
 
 public class EmployeePersistence {
+
+    public static final String FILENAME = "SCD_A1/src/Models/EmployeesData.txt";
     public static void writeToFile(String _username, String _password) {
         ArrayList<Employee> employees = new ArrayList<>();
-        final String fileName = "./src/EmployeesData.txt";
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
@@ -23,7 +26,7 @@ public class EmployeePersistence {
             e.printStackTrace();
         }
 
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
             for (Employee e : employees) {
                 bw.write(e.toFileString());
             }

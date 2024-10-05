@@ -1,7 +1,10 @@
-import java.time.format.DateTimeFormatter;
+package Controller;
+
+import Models.*;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.time.LocalDate;
 
 public class CustomerMenu extends Menu {
 
@@ -112,13 +115,10 @@ public class CustomerMenu extends Menu {
     }
 
     public void updateCNICExpiry(ArrayList<NADRARecord> nadraRecords) {
-        // TODO
-//        System.out.println(myCustomer.getCNIC());
         Scanner input = new Scanner(System.in);
         String CNIC;
         String currentExpiry = null;
         NADRARecord myNADRARecord = null;
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
         while (true) {
             System.out.println("Enter your CNIC: ");

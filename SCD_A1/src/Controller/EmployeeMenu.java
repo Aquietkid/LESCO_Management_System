@@ -1,3 +1,8 @@
+package Controller;
+
+import Models.*;
+import Models.EmployeePersistence;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,14 +17,14 @@ public class EmployeeMenu extends Menu {
     public EmployeeMenu(User employee) {
         this.message = """
                 Employee Menu
-                1. Create Bill
+                1. Create Models.Bill
                 2. Modify Bills
-                3. Add New Customer
-                4. Update a Customer
-                5. Record Bill Payment
+                3. Add New Models.Customer
+                4. Update a Models.Customer
+                5. Record Models.Bill Payment
                 6. Update Tariffs and Taxes
-                7. View Customer Bills
-                8. View Bill Reports
+                7. View Models.Customer Bills
+                8. View Models.Bill Reports
                 9. View Customers with CNICs Expiring Soon
                 10. View All Customers
                 11. Change Password
@@ -110,7 +115,7 @@ public class EmployeeMenu extends Menu {
                 unpaidAmount += br.getTotalBillingAmount();
             }
         }
-        System.out.println("Bill report: ");
+        System.out.println("Models.Bill report: ");
         System.out.println("Total unpaid bills: " + countUnpaidBills + "\nTotal amount unpaid: " + unpaidAmount);
         System.out.println("Total paid bills: " + countPaidBills + "\nTotal amount paid: " + paidAmount);
         System.out.println("-----------------------------------------------------------------------------------");
@@ -137,7 +142,7 @@ public class EmployeeMenu extends Menu {
 
         String customerCNIC;
         while (true) {
-            System.out.print("Enter Customer CNIC (13-digit, without dashes):");
+            System.out.print("Enter Models.Customer CNIC (13-digit, without dashes):");
             customerCNIC = input.nextLine();
             if (customerCNIC.length() != 13) {
                 System.out.println("Enter CNIC again!");
@@ -180,7 +185,7 @@ public class EmployeeMenu extends Menu {
 
         Customer newCustomer = new Customer(customerID, customerCNIC, customerName, customerAddress, phoneNumber, isCommercial, isThreePhase, connectionDate);
         customers.add(newCustomer);
-        System.out.println("Customer added successfully!");
+        System.out.println("Models.Customer added successfully!");
     }
 
     private boolean getBooleanInput(Scanner input) {
@@ -203,7 +208,7 @@ public class EmployeeMenu extends Menu {
             int month;
             int year;
             LocalDate now = LocalDate.now();
-            System.out.println("Date should not be after " + now.toString());
+            System.out.println("Date should not be after " + now);
             try {
                 while (true) {
                     System.out.print("Enter the year (YYYY): ");
@@ -259,7 +264,7 @@ public class EmployeeMenu extends Menu {
 
         // Step 1: Get a valid customer ID
         while (true) {
-            System.out.print("Enter 4-digit Customer ID: ");
+            System.out.print("Enter 4-digit Models.Customer ID: ");
             customerID = scanner.nextLine().trim();
             if (customerID.matches("\\d{4}")) {
                 for (Customer c : customers) {
@@ -270,9 +275,9 @@ public class EmployeeMenu extends Menu {
                 }
                 if (myCustomer != null) break;
                 else
-                    System.out.println("Customer ID does not exist in the records. Please enter a valid customer ID!");
+                    System.out.println("Models.Customer ID does not exist in the records. Please enter a valid customer ID!");
             } else {
-                System.out.println("Invalid Customer ID. It must be a 4-digit number.");
+                System.out.println("Invalid Models.Customer ID. It must be a 4-digit number.");
             }
         }
 
@@ -291,7 +296,7 @@ public class EmployeeMenu extends Menu {
         }
 
         // Step 4: List all unpaid bills and let the user select which one to pay
-        System.out.println("Unpaid Bills for Customer ID: " + myCustomer.getCustomerID());
+        System.out.println("Unpaid Bills for Models.Customer ID: " + myCustomer.getCustomerID());
         for (int i = 0; i < unpaidBills.size(); i++) {
             BillingRecord br = unpaidBills.get(i);
             System.out.println((i + 1) + ". Billing Month: " + br.getBillingMonth() + ", Amount Due: " + br.getTotalBillingAmount());
@@ -319,7 +324,7 @@ public class EmployeeMenu extends Menu {
         BillingRecord selectedBill = unpaidBills.get(selectedBillIndex);
         LocalDate dueDate = LocalDate.parse(selectedBill.getDueDate(), DateTimeFormatter.ofPattern("d-M-yyyy"));
         if (dueDate.isBefore(today)) {
-            System.out.println("Bill due date passed. ");
+            System.out.println("Models.Bill due date passed. ");
             return;
         }
         selectedBill.setBillPaidStatus(true);  // Mark the bill as paid
@@ -351,7 +356,7 @@ public class EmployeeMenu extends Menu {
         Scanner scanner = new Scanner(System.in);
         String customerID;
         while (true) {
-            System.out.print("Enter 4-digit Customer ID: ");
+            System.out.print("Enter 4-digit Models.Customer ID: ");
             customerID = scanner.nextLine().trim();
             boolean customerExists = false;
             if (customerID.matches("\\d{4}")) {
@@ -363,11 +368,11 @@ public class EmployeeMenu extends Menu {
                 }
                 if (customerExists) break;
                 else
-                    System.out.println("Customer ID does not exist in the records. Please enter a valid customer ID!");
-            } else System.out.println("Invalid Customer ID. It must be a 4-digit number.");
+                    System.out.println("Models.Customer ID does not exist in the records. Please enter a valid customer ID!");
+            } else System.out.println("Invalid Models.Customer ID. It must be a 4-digit number.");
         }
 
-        System.out.println("Bills of Customer " + customerID + ":");
+        System.out.println("Bills of Models.Customer " + customerID + ":");
         for (BillingRecord br : billingRecords) {
             if (br.getCustomerID().equals(customerID)) {
                 System.out.println(br);
@@ -517,7 +522,7 @@ public class EmployeeMenu extends Menu {
         for (Customer customer : customers) {
             if (customer.getCustomerID().equals(customerID)) {
                 try {
-                    System.out.println("Updating details for Customer ID: " + customer.getCustomerID());
+                    System.out.println("Updating details for Models.Customer ID: " + customer.getCustomerID());
 
                     // Update customer name
                     System.out.print("Enter new customer name (current: " + customer.getCustomerName() + "): ");
@@ -568,7 +573,7 @@ public class EmployeeMenu extends Menu {
                         customer.setPeakUnitsConsumed(Float.parseFloat(peakUnits));
                     }
 
-                    System.out.println("Customer details updated successfully!\n");
+                    System.out.println("Models.Customer details updated successfully!\n");
 
                 } catch (NumberFormatException e) {
                     System.err.println("Invalid input. Please enter numbers for numeric fields.");
@@ -576,7 +581,7 @@ public class EmployeeMenu extends Menu {
                     System.err.println("An error occurred while updating customer details: " + e.getMessage());
                 } finally {
 //                    scanner.close();
-                    System.out.println("Customer details updated!\n");
+                    System.out.println("Models.Customer details updated!\n");
                 }
             }
         }
@@ -594,7 +599,7 @@ public class EmployeeMenu extends Menu {
 
 
         while (true) {
-            System.out.print("Enter 4-digit Customer ID: ");
+            System.out.print("Enter 4-digit Models.Customer ID: ");
             customerID = scanner.nextLine().trim();
             if (customerID.matches("\\d{4}")) {
                 for (Customer c : customers) {
@@ -605,8 +610,8 @@ public class EmployeeMenu extends Menu {
                 }
                 if (myCustomer != null) break;
                 else
-                    System.out.println("Customer ID does not exist in the records. Please enter a valid customer ID!");
-            } else System.out.println("Invalid Customer ID. It must be a 4-digit number.");
+                    System.out.println("Models.Customer ID does not exist in the records. Please enter a valid customer ID!");
+            } else System.out.println("Invalid Models.Customer ID. It must be a 4-digit number.");
         }
 
         myTariffTax = TariffTax.getTariffTax(tariffTaxes, myCustomer);

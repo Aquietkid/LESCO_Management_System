@@ -1,11 +1,15 @@
+package Models;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TariffTaxPersistence  {
 
-    public static void writeToFile(String fileName, List<TariffTax> tariffs) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+    private static final String FILENAME = "SCD_A1/src/Models/TariffTaxInfo.txt";
+
+    public static void writeToFile(List<TariffTax> tariffs) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
             for (TariffTax tariffTax : tariffs) {
                 bw.write(tariffTax.toFileString());
             }
@@ -15,10 +19,10 @@ public class TariffTaxPersistence  {
         }
     }
 
-    public static ArrayList<TariffTax> readFromFile(String fileName) {
+    public static ArrayList<TariffTax> readFromFile() {
         ArrayList<TariffTax> tariffList = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
             String line;
             int lineNum = 0;
             while ((line = br.readLine()) != null) {

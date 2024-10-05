@@ -1,22 +1,31 @@
+import Controller.CustomerMenu;
+import Controller.EmployeeMenu;
+import Controller.UserWrapper;
+import View.LoginScreen;
+import Models.BillingRecord;
+import Models.Customer;
+import Models.NADRARecord;
+import Models.TariffTax;
+import Models.BillingRecordPersistence;
+import Models.CustomerPersistence;
+import Models.NADRADBPersistence;
+import Models.TariffTaxPersistence;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
     public static void main(String[] args) {
-        final String customersFileName = "./src/CustomersData.txt";
-        final String tariffTaxFileName = "./src/TariffTaxInfo.txt";
-        final String NADRADBFilename = "./src/NADRADB.txt";
-        final String billingRecordsFileName = "./src/BillingInfo.txt";
-
-        ArrayList<TariffTax> tariffs = TariffTaxPersistence.readFromFile(tariffTaxFileName);
-        ArrayList<Customer> customers = CustomerPersistence.readFromFile(customersFileName);
-        ArrayList<NADRARecord> nadraRecords = NADRADBPersistence.readFromFile(NADRADBFilename);
-        ArrayList<BillingRecord> billingRecords = BillingRecordPersistence.readFromFile(billingRecordsFileName);
+        new LoginScreen();
+        ArrayList<TariffTax> tariffs = TariffTaxPersistence.readFromFile();
+        ArrayList<Customer> customers = CustomerPersistence.readFromFile();
+        ArrayList<NADRARecord> nadraRecords = NADRADBPersistence.readFromFile();
+        ArrayList<BillingRecord> billingRecords = BillingRecordPersistence.readFromFile();
 
         System.out.println(billingRecords);
 
-        UserWrapper myUser = new UserWrapper(null);
+        UserWrapper myUser = new UserWrapper();
 
         Scanner input = new Scanner(System.in);
         while (true) {
@@ -31,7 +40,7 @@ public class Main {
                 Customer myCustomer = (Customer) myUser.getMyUser();
                 for(Customer customer : customers) {
                     if(customer.getCustomerID().equals(myCustomer.getCustomerID())) {
-//                        System.out.println("My Customer updated");
+//                        System.out.println("My Models.Customer updated");
                         myCustomer = customer;
                         break;
                     }
@@ -49,10 +58,10 @@ public class Main {
                 char choice = input.next().charAt(0);
                 if (choice == 'n' || choice == 'N') {
                     input.close();
-                    TariffTaxPersistence.writeToFile(tariffTaxFileName, tariffs);
-                    CustomerPersistence.writeToFile(customersFileName, customers);
-                    NADRADBPersistence.writeToFile(NADRADBFilename, nadraRecords);
-                    BillingRecordPersistence.writeToFile(billingRecordsFileName, billingRecords);
+                    TariffTaxPersistence.writeToFile(tariffs);
+                    CustomerPersistence.writeToFile(customers);
+                    NADRADBPersistence.writeToFile(nadraRecords);
+                    BillingRecordPersistence.writeToFile(billingRecords);
                     System.out.println("All files updated. \nThank you for using the LESCO system!");
                     return;
                 } else if (choice != 'y' && choice != 'Y') {

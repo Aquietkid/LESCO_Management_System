@@ -1,6 +1,8 @@
+package Models;
+
 import java.util.ArrayList;
 
-class TariffTax {
+public class TariffTax {
     private final String meterType;
     private final String customerType;
     private double regularUnitPrice;
@@ -57,10 +59,10 @@ class TariffTax {
         this.fixedCharges = fixedCharges;
     }
 
-    static TariffTax getTariffTax(ArrayList<TariffTax> tariffTaxes, Customer myCustomer) {
+    public static TariffTax getTariffTax(ArrayList<TariffTax> tariffTaxes, Customer myCustomer) {
         TariffTax myTariffTax;
         if (!myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //1-phase domestic
-            myTariffTax = tariffTaxes.get(0);
+            myTariffTax = tariffTaxes.getFirst();
         } else if (!myCustomer.getThreePhase() && myCustomer.getIsCommercial()) { //1-phase commercial
             myTariffTax = tariffTaxes.get(1);
         } else if (myCustomer.getThreePhase() && !myCustomer.getIsCommercial()) { //3-phase domestic
@@ -74,7 +76,7 @@ class TariffTax {
     @Override
     public String toString() {
         return "Meter Type: " + meterType +
-                ", Customer Type: " + customerType +
+                ", Models.Customer Type: " + customerType +
                 ", Regular Unit Price: " + regularUnitPrice +
                 ", Peak Hour Unit Price: " + (peakHourUnitPrice != null ? peakHourUnitPrice : "N/A") +
                 ", Tax Percentage: " + taxPercentage +

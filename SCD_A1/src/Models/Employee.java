@@ -1,6 +1,8 @@
+package Models;
+
 public class Employee implements User {
-    private String username;
-    private String password;
+    private final String username;
+    private final String password;
 
     public Employee(String username, String password) {
         this.username = username;
@@ -9,10 +11,6 @@ public class Employee implements User {
 
     public String getUsername() {
         return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 
     public String getPassword() {
@@ -24,7 +22,4 @@ public class Employee implements User {
         return this.username + "," + this.password + "\n";
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

@@ -1,16 +1,21 @@
+package Models;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.time.format.DateTimeFormatter;
 
 public class BillingRecordPersistence {
 
-    // Method to write a list of billing records to file
-    public static void writeToFile(String fileName, ArrayList<BillingRecord> billingRecords) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+    private static final String FILENAME = "SCD_A1/src/Models/BillingInfo.txt";
+
+    /**
+     * Writes a list of billing records to file
+     */
+    public static void writeToFile(ArrayList<BillingRecord> billingRecords) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
             for (BillingRecord record : billingRecords) {
                 bw.write(record.toFileString());
             }
@@ -19,12 +24,13 @@ public class BillingRecordPersistence {
         }
     }
 
-    // Method to read billing records from file
-    public static ArrayList<BillingRecord> readFromFile(String fileName) {
+    /**
+     * Method to read billing records from file
+     */
+    public static ArrayList<BillingRecord> readFromFile() {
         ArrayList<BillingRecord> billingRecords = new ArrayList<>();
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");

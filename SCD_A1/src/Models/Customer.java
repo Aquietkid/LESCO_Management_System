@@ -1,11 +1,7 @@
-/*
+package Models;/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Ali
@@ -51,16 +47,8 @@ public class Customer implements User {
         return customerID;
     }
 
-    public void setCustomerID(String customerID) {
-        this.customerID = customerID;
-    }
-
     public String getCNIC() {
         return CNIC;
-    }
-
-    public void setCNIC(String CNIC) {
-        this.CNIC = CNIC;
     }
 
     public String getCustomerName() {
@@ -105,10 +93,6 @@ public class Customer implements User {
 
     public String getConnectionDate() {
         return connectionDate;
-    }
-
-    public void setConnectionDate(String connectionDate) {
-        this.connectionDate = connectionDate;
     }
 
     public float getRegularUnitsConsumed() {

@@ -1,12 +1,16 @@
+package Models;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerPersistence {
-    public static ArrayList<Customer> readFromFile(String fileName) {
+
+    public final static String FILENAME = "SCD_A1/src/Models/CustomersData.txt";
+    public static ArrayList<Customer> readFromFile() {
         ArrayList<Customer> customers = new ArrayList<>();
 
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(FILENAME))) {
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
@@ -32,8 +36,8 @@ public class CustomerPersistence {
         return customers;
     }
 
-    public static void writeToFile(String fileName, List<Customer> customers) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))) {
+    public static void writeToFile(List<Customer> customers) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
             for (Customer customer : customers) {
                 bw.write(customer.toFileString());
             }
